@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.secondhand.mapper.ProductMapper">
+
+    <select id="findAll" resultType="Product">
+        select p.*, c.category_name, u.username as seller_name
+        from product p
+        left join category c on p.category_id = c.category_id
+        left join sys_user u on p.user_id = u.user_id
+        order by p.publish_time desc
+    </select>
+
+    <select id="findById" resultType="Product">
+        select p.*, c.category_name, u.username as seller_name
+        from product p
+        left join category c on p.category_id = c.category_id
+        left join sys_user u on p.user_id = u.user_id
+        where p.product_id = #{productId}
+    </select>
+
+    <select id="findByUserId" resultType="Product">
+        select p.*, c.category_name, u.username as seller_name
+        from product p
+        left join category c on p.category_id = c.category_id
+        left join sys_user u on p.user_id = u.user_id
+        where p.user_id = #{userId}
+        order by p.publish_time desc
+    </select>
+
+    <select id="searchProducts" resultType="Product">
+        select p.*, c.category_name, u.username as seller_name
+        from product p
+        left join category c on p.category_id = c.category_id
+        left join sys_user u on p.user_id = u.user_id
+        where 1=1
+        <if test="keyword != null and keyword != ''">
+            and p.product_name like concat('%', #{keyword}, '%')
+        </if>
+        <if test="categoryId != null">
+            and p.category_id = #{categoryId}
+        </if>
+        <if test="minPrice != null">
+            and p.price <![CDATA[>=]]> #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            and p.price <![CDATA[<=]]> #{maxPrice}
+        </if>
+        order by p.publish_time desc
+    </select>
+
+    <insert id="insertProduct" parameterType="Product" useGeneratedKeys="true" keyProperty="productId">
+        insert into product(user_id,category_id,product_name,product_desc,price,original_price,quality_level,image_url,status,publish_time)
+        values(#{userId},#{categoryId},#{productName},#{productDesc},#{price},#{originalPrice},#{qualityLevel},#{imageUrl},#{status},#{publishTime})
+    </insert>
+
+    <update id="updateProduct" parameterType="Product">
+        update product
+        set category_id = #{categoryId},
+        product_name = #{productName},
+        product_desc = #{productDesc},
+        price = #{price},
+        original_price = #{originalPrice},
+        quality_level = #{qualityLevel},
+        image_url = #{imageUrl},
+        status = #{status}
+        where product_id = #{productId}
+    </update>
+
+    <delete id="deleteById">
+        delete from product where product_id = #{productId}
+    </delete>
+
+    <update id="updateStatus">
+        update product set status = #{status} where product_id = #{productId}
+    </update>
+</mapper>

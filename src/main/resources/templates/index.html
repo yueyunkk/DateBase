@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页 - 校园二手交易系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product-card img{
+            height: 220px;
+            object-fit: cover;
+        }
+        .nav-link{
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/index}">校园二手交易系统</a>
+
+        <div class="collapse navbar-collapse show">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/index}">首页</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/product/list}">商品列表</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/product/add}">发布商品</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/product/my}">我的商品</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/favorite/my}">我的收藏</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/order/my-buy}">我的购买</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/order/my-sell}">我的出售</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/analysis}">数据分析</a></li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" th:href="@{/user/profile}">个人中心</a></li>
+                <li class="nav-item" th:if="${session.loginUser != null and session.loginUser.role == 'admin'}">
+                    <a class="nav-link" th:href="@{/category/list}">分类管理</a>
+                </li>
+                <li class="nav-item" th:if="${session.loginUser != null and session.loginUser.role == 'admin'}">
+                    <a class="nav-link" th:href="@{/user/list}">用户管理</a>
+                </li>
+                <li class="nav-item" th:if="${session.loginUser != null and session.loginUser.role == 'admin'}">
+                    <a class="nav-link" th:href="@{/order/list}">订单管理</a>
+                </li>
+                <li class="nav-item"><a class="nav-link text-warning" th:href="@{/logout}">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="p-4 mb-4 bg-light rounded-3">
+        <h1 class="display-6">欢迎来到校园二手交易平台</h1>
+        <p class="lead">在这里，你可以发布闲置、购买所需商品，并查看价格分析统计。</p>
+        <a class="btn btn-primary" th:href="@{/product/list}">进入商品市场</a>
+    </div>
+
+    <h3 class="mb-3">最新商品</h3>
+    <div class="row">
+        <div class="col-md-3 mb-4" th:each="p : ${products}">
+            <div class="card product-card h-100">
+                <img th:src="${p.imageUrl}" class="card-img-top" alt="商品图片">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${p.productName}">商品名称</h5>
+                    <p class="text-danger fw-bold">¥<span th:text="${p.price}">0</span></p>
+                    <p class="text-muted mb-1">分类：<span th:text="${p.categoryName}"></span></p>
+                    <p class="text-muted mb-1">卖家：<span th:text="${p.sellerName}"></span></p>
+                    <p>
+                        <span class="badge bg-success" th:if="${p.status == 'ON_SALE'}">在售</span>
+                        <span class="badge bg-secondary" th:if="${p.status == 'OFF_SALE'}">下架</span>
+                        <span class="badge bg-danger" th:if="${p.status == 'SOLD'}">已售</span>
+                    </p>
+                    <a class="btn btn-outline-primary btn-sm" th:href="@{'/product/detail/' + ${p.productId}}">查看详情</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

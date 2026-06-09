@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.secondhand.mapper.MessageMapper">
+
+    <insert id="insertMessage" parameterType="Message" useGeneratedKeys="true" keyProperty="messageId">
+        insert into message(user_id,product_id,content,message_time)
+        values(#{userId},#{productId},#{content},#{messageTime})
+    </insert>
+
+    <select id="findByProductId" resultType="Message">
+        select m.*, u.username
+        from message m
+        left join sys_user u on m.user_id = u.user_id
+        where m.product_id = #{productId}
+        order by m.message_time desc
+    </select>
+</mapper>

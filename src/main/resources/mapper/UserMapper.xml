@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.secondhand.mapper.UserMapper">
+
+    <select id="findByUsername" resultType="User">
+        select * from sys_user where username = #{username}
+    </select>
+
+    <select id="findById" resultType="User">
+        select * from sys_user where user_id = #{userId}
+    </select>
+
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+        insert into sys_user(username,password,real_name,gender,phone,email,role,status,register_time)
+        values(#{username},#{password},#{realName},#{gender},#{phone},#{email},#{role},#{status},#{registerTime})
+    </insert>
+
+    <update id="updateUser" parameterType="User">
+        update sys_user
+        set real_name = #{realName},
+        gender = #{gender},
+        phone = #{phone},
+        email = #{email}
+        where user_id = #{userId}
+    </update>
+
+    <select id="findAll" resultType="User">
+        select * from sys_user order by register_time desc
+    </select>
+</mapper>

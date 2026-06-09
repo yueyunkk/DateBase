@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.secondhand.mapper.CategoryMapper">
+
+    <select id="findAll" resultType="Category">
+        select * from category where status = 1 order by sort_no asc, category_id asc
+    </select>
+
+    <select id="findById" resultType="Category">
+        select * from category where category_id = #{categoryId}
+    </select>
+
+    <insert id="insertCategory" parameterType="Category" useGeneratedKeys="true" keyProperty="categoryId">
+        insert into category(category_name,category_desc,sort_no,status)
+        values(#{categoryName},#{categoryDesc},#{sortNo},#{status})
+    </insert>
+
+    <update id="updateCategory" parameterType="Category">
+        update category
+        set category_name = #{categoryName},
+        category_desc = #{categoryDesc},
+        sort_no = #{sortNo},
+        status = #{status}
+        where category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteById">
+        delete from category where category_id = #{categoryId}
+    </delete>
+</mapper>

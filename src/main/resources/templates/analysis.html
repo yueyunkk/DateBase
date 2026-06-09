@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>数据分析</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        .chart-box{
+            width:100%;
+            height:400px;
+            background:#fff;
+            border:1px solid #eee;
+            border-radius:12px;
+            padding:10px;
+        }
+        body{
+            background:#f5f7fa;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/index}">校园二手交易系统</a>
+        <div>
+            <a class="btn btn-outline-light btn-sm" th:href="@{/index}">首页</a>
+            <a class="btn btn-warning btn-sm" th:href="@{/logout}">退出</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h3 class="mb-4">系统数据分析</h3>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div id="chart1" class="chart-box"></div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div id="chart2" class="chart-box"></div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div id="chart3" class="chart-box"></div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div id="chart4" class="chart-box"></div>
+        </div>
+        <div class="col-md-12 mb-4">
+            <div id="chart5" class="chart-box"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 图1：商品类别数量统计
+    fetch('/analysis/category-count')
+        .then(res => res.json())
+        .then(data => {
+            const chart = echarts.init(document.getElementById('chart1'));
+            chart.setOption({
+                title: { text: '商品类别数量统计', left: 'center' },
+                tooltip: {},
+                xAxis: { type: 'category', data: data.map(i => i.name) },
+                yAxis: { type: 'value' },
+                series: [{
+                    type: 'bar',
+                    data: data.map(i => i.value),
+                    itemStyle: { color: '#5470c6' }
+                }]
+            });
+        });
+
+    // 图2：分类平均价格
+    fetch('/analysis/avg-price')
+        .then(res => res.json())
+        .then(data => {
+            const chart = echarts.init(document.getElementById('chart2'));
+            chart.setOption({
+                title: { text: '各分类平均价格', left: 'center' },
+                tooltip: {},
+                xAxis: { type: 'category', data: data.map(i => i.name) },
+                yAxis: { type: 'value' },
+                series: [{
+                    type: 'line',
+                    smooth: true,
+                    data: data.map(i => i.value),
+                    itemStyle: { color: '#91cc75' }
+                }]
+            });
+        });
+
+    // 图3：月度成交量
+    fetch('/analysis/monthly-deal')
+        .then(res => res.json())
+        .then(data => {
+            const chart = echarts.init(document.getElementById('chart3'));
+            chart.setOption({
+                title: { text: '月度成交量', left: 'center' },
+                tooltip: {},
+                xAxis: { type: 'category', data: data.map(i => i.name) },
+                yAxis: { type: 'value' },
+                series: [{
+                    type: 'line',
+                    data: data.map(i => i.value),
+                    itemStyle: { color: '#fac858' },
+                    areaStyle: {}
+                }]
+            });
+        });
+
+    // 图4：价格区间分布
+    fetch('/analysis/price-range')
+        .then(res => res.json())
+        .then(data => {
+            const chart = echarts.init(document.getElementById('chart4'));
+            chart.setOption({
+                title: { text: '价格区间分布', left: 'center' },
+                tooltip: { trigger: 'item' },
+                series: [{
+                    name: '价格分布',
+                    type: 'pie',
+                    radius: '65%',
+                    data: [
+                        { value: data.below50 || 0, name: '50以下' },
+                        { value: data.between50And200 || 0, name: '50-200' },
+                        { value: data.between200And500 || 0, name: '200-500' },
+                        { value: data.above500 || 0, name: '500以上' }
+                    ]
+                }]
+            });
+        });
+
+    // 图5：用户发布排行
+    fetch('/analysis/user-rank')
+        .then(res => res.json())
+        .then(data => {
+            const chart = echarts.init(document.getElementById('chart5'));
+            chart.setOption({
+                title: { text: '用户发布商品排行 TOP10', left: 'center' },
+                tooltip: {},
+                xAxis: { type: 'category', data: data.map(i => i.name) },
+                yAxis: { type: 'value' },
+                series: [{
+                    type: 'bar',
+                    data: data.map(i => i.value),
+                    itemStyle: { color: '#ee6666' }
+                }]
+            });
+        });
+</script>
+</body>
+</html>

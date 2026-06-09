@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.secondhand.mapper.OrdersMapper">
+
+    <insert id="insertOrder" parameterType="Orders" useGeneratedKeys="true" keyProperty="orderId">
+        insert into orders(product_id,buyer_id,seller_id,order_price,order_status,order_time,finish_time,remark)
+        values(#{productId},#{buyerId},#{sellerId},#{orderPrice},#{orderStatus},#{orderTime},#{finishTime},#{remark})
+    </insert>
+
+    <select id="findById" resultType="Orders">
+        select o.*, p.product_name, b.username as buyer_name, s.username as seller_name
+        from orders o
+        left join product p on o.product_id = p.product_id
+        left join sys_user b on o.buyer_id = b.user_id
+        left join sys_user s on o.seller_id = s.user_id
+        where o.order_id = #{orderId}
+    </select>
+
+    <select id="findByBuyerId" resultType="Orders">
+        select o.*, p.product_name, b.username as buyer_name, s.username as seller_name
+        from orders o
+        left join product p on o.product_id = p.product_id
+        left join sys_user b on o.buyer_id = b.user_id
+        left join sys_user s on o.seller_id = s.user_id
+        where o.buyer_id = #{buyerId}
+        order by o.order_time desc
+    </select>
+
+    <select id="findBySellerId" resultType="Orders">
+        select o.*, p.product_name, b.username as buyer_name, s.username as seller_name
+        from orders o
+        left join product p on o.product_id = p.product_id
+        left join sys_user b on o.buyer_id = b.user_id
+        left join sys_user s on o.seller_id = s.user_id
+        where o.seller_id = #{sellerId}
+        order by o.order_time desc
+    </select>
+
+    <select id="findAll" resultType="Orders">
+        select o.*, p.product_name, b.username as buyer_name, s.username as seller_name
+        from orders o
+        left join product p on o.product_id = p.product_id
+        left join sys_user b on o.buyer_id = b.user_id
+        left join sys_user s on o.seller_id = s.user_id
+        order by o.order_time desc
+    </select>
+
+    <update id="updateOrderStatus">
+        update orders
+        set order_status = #{orderStatus}
+        where order_id = #{orderId}
+    </update>
+</mapper>

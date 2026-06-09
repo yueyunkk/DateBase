@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.secondhand.mapper.AnalysisMapper">
+
+    <select id="countProductByCategory" resultType="map">
+        select c.category_name as name, count(*) as value
+        from product p
+        join category c on p.category_id = c.category_id
+        group by c.category_name
+        order by value desc
+    </select>
+
+    <select id="avgPriceByCategory" resultType="map">
+        select c.category_name as name, round(avg(p.price), 2) as value
+        from product p
+        join category c on p.category_id = c.category_id
+        group by c.category_name
+        order by value desc
+    </select>
+
+    <select id="monthlyDealCount" resultType="map">
+        select date_format(order_time, '%Y-%m') as name, count(*) as value
+        from orders
+        where order_status = 'COMPLETED'
+        group by date_format(order_time, '%Y-%m')
+        order by name
+    </select>
+
+    <select id="priceRangeCount" resultType="map">
+        select
+        sum(case when price  &lt;50 then 1 else 0 end) as below50,
+        sum(case when price >= 50 and price &lt;200 then 1 else 0 end) as between50And200,
+        sum(case when price >= 200 and price &lt;500 then 1 else 0 end) as between200And500,
+        sum(case when price >= 500 then 1 else 0 end) as above500
+        from product
+    </select>
+
+    <select id="userPublishRank" resultType="map">
+        select u.username as name, count(p.product_id) as value
+        from sys_user u
+        left join product p on u.user_id = p.user_id
+        group by u.user_id, u.username
+        order by value desc
+        limit 10
+    </select>
+</mapper>
